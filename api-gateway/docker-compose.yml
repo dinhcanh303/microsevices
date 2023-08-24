@@ -6,8 +6,8 @@ networks:
 services:
   # Postgres: The database used by Kong
   kong-database:
-    image: postgres:9.6
     container_name: kong-postgres
+    image: postgres:9.6
     restart: on-failure
     networks:
       - kong-net
@@ -27,6 +27,7 @@ services:
 
   # Kong database migration
   kong-migration:
+    container_name: kong-migration
     image: ${KONG_DOCKER_TAG:-kong:latest}
     command: kong migrations bootstrap
     networks:
@@ -43,10 +44,13 @@ services:
 
   # Kong: The API Gateway
   kong:
+    container_name: kong
     image: ${KONG_DOCKER_TAG:-kong:latest}
     restart: on-failure
     networks:
       - kong-net
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -56,6 +60,7 @@ services:
       KONG_PROXY_LISTEN: 0.0.0.0:8000
       KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
     depends_on:
       - kong-database
     healthcheck:
@@ -70,6 +75,7 @@ services:
       - "8444:8444"
   # Konga database prepare
   konga-prepare:
+    container_name: kong-prepare
     image: pantsel/konga:latest
     command: "-c prepare -a postgres -u postgresql://kong:${KONG_PG_PASSWORD:-kong}@kong-database:5432/konga"
     networks:
@@ -79,6 +85,7 @@ services:
       - kong-database
   # Konga: Kong GUI
   konga:
+    container_name: konga
     image: pantsel/konga:latest
     restart: always
     networks:
