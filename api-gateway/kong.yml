@@ -1,15 +1,35 @@
-_format_version: "2.6"
-
+_format_version: "2.1"
 services:
-  - name: hello-service
-    url: http://localhost:3000
+  - name: git-service
+    url: https://api.github.com
     routes:
-      - name: hello-route
+      - name: git-route
         paths:
-          - /hello
-# plugins:
-#   - name: rate-limiting
-#     service: hello-service
-#     config:
-#       minute: 5
-#       policy: local
+          - /git
+  - name: app2-service
+    url: https://app2.tlcmodular.com
+    routes:
+      - name: app2-route
+        paths:
+          - /app2
+  - name: social-service
+    url: http://192.168.109.93:3000
+    routes:
+      - name: social-route
+        paths:
+          - /social
+plugins:
+  - name: rate-limiting
+    service: git-service
+    config:
+      minute: 5
+      policy: local
+  - name: ldap-auth
+    config:
+      hide_credentials: true
+      ldap_host: 192.168.100.6
+      ldap_port: 389
+      ldap_password: LambadaOhio7$
+      base_dn: dc=example,dc=com
+      attribute: cn
+      header_type: ldap
