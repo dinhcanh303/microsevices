@@ -13,23 +13,58 @@ services:
         paths:
           - /app2
   - name: social-service
-    url: http://192.168.109.93:3000
+    url: http://127.0.0.1:3000
     routes:
       - name: social-route
         paths:
           - /social
 plugins:
-  - name: rate-limiting
-    service: git-service
+  #authentication
+  - name: key-auth
     config:
-      minute: 5
-      policy: local
+      key_names:
+      - apikey
+  - name: basic-auth
+    config:
+      hide_credentials: true
   - name: ldap-auth
     config:
       hide_credentials: true
       ldap_host: 192.168.100.6
       ldap_port: 389
-      ldap_password: LambadaOhio7$
       base_dn: dc=example,dc=com
       attribute: cn
       header_type: ldap
+  #security
+  
+  - name: ip-restriction
+    config:
+      deny:
+      - 127.23.0.1
+      - 127.23.0.2
+  #traffic-control
+  - name: rate-limiting
+    service: git-service
+    config:
+      minute: 5
+      policy: local
+  #analytics & monitoring
+  - name: datadog
+    config:
+      host: 127.0.0.1
+      port: 8125
+      flush_timeout: 2
+      retry_count: 10
+  - name: prometheus
+    config:
+      per_consumer: false
+  #logging
+  - name: statsd
+    config:
+      host: 127.0.0.1
+      port: 8125
+      allow_status_codes:
+      - 200-205
+      - 400-499
+      flush_timeout: 2
+      retry_count: 10

@@ -1,0 +1,16 @@
+
+GET http://localhost:8000/git
+Accept: application/json
+###
+GET http://localhost:8000/app2
+Accept: application/json
+###
+GET http://localhost:8000/social
+Accept: application/json
+###
+GET http://localhost:8001/services
+Accept: application/json
+###
+GET http://localhost:8001/routes
+Accept: application/json
+
