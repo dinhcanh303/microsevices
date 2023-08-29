@@ -48,6 +48,18 @@ plugins:
     config:
       minute: 5
       policy: local
+  - name: proxy-cache
+    config:
+      response_code:
+      - 200
+      request_method:
+      - GET
+      - HEAD
+      content_type:
+      - text/plain
+      - application/json
+      cache_ttl: 300
+      strategy: memory
   #analytics & monitoring
   - name: datadog
     config:
