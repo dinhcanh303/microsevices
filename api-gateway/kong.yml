@@ -18,6 +18,12 @@ services:
       - name: social-route
         paths:
           - /social
+  - name: media-service
+    url: http://127.0.0.1:3005
+    routes:
+      - name: media-route
+        paths:
+          - /media
 plugins:
   #authentication
   - name: key-auth
